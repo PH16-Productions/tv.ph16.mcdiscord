@@ -92,9 +92,9 @@ public class User {
         entity.setAvatar(getValueSafe(jsonObject, "avatar", String.class));
         entity.setVerified(getValueSafe(jsonObject, "verified", Boolean.class));
         entity.setEmail(getValueSafe(jsonObject, "email", String.class));
-        entity.setFlags(getValueSafe(jsonObject, "flags", Integer.class));
-        entity.setPremiumType(getValueSafe(jsonObject, "premium_type", Integer.class));
-        entity.setPublicFlags(getValueSafe(jsonObject, "public_flags", Integer.class));
+        entity.setFlags(getValueSafe(jsonObject, "flags", Integer.TYPE));
+        entity.setPremiumType(getValueSafe(jsonObject, "premium_type", Integer.TYPE));
+        entity.setPublicFlags(getValueSafe(jsonObject, "public_flags", Integer.TYPE));
         return entity;
     }
     public static List<User> fillList(JSONArray jsonArray) {

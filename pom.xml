@@ -99,5 +99,10 @@
             <artifactId>scribejava-core</artifactId>
             <version>8.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>tv.ph16</groupId>
+            <artifactId>bukkitwebserver</artifactId>
+            <version>2.2.9</version>
+        </dependency>
     </dependencies>
 </project>

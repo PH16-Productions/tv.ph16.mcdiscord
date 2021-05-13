@@ -51,12 +51,12 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
         discordClient = new Client(clientId, clientSecret, scopes, callback);
         PluginManager pluginManager = getServer().getPluginManager();
         org.bukkit.plugin.Plugin webServerPlugin = pluginManager.getPlugin("Bukkit-Web-Server");
-        if (webServerPlugin instanceof net.englard.shmuelie.bukkitwebserver.Plugin) {
+        if (webServerPlugin instanceof tv.ph16.bukkitwebserver.Plugin) {
             pluginManager.registerEvents(this, this);
-            net.englard.shmuelie.bukkitwebserver.Plugin webServer = (net.englard.shmuelie.bukkitwebserver.Plugin)webServerPlugin;
+            tv.ph16.bukkitwebserver.Plugin webServer = (tv.ph16.bukkitwebserver.Plugin)webServerPlugin;
             httpContext = webServer.addHandler("/discord/", this);
         } else {
-            getLogger().severe(net.englard.shmuelie.bukkitwebserver.Plugin.class.getCanonicalName() + " is required to run this");
+            getLogger().severe(tv.ph16.bukkitwebserver.Plugin.class.getCanonicalName() + " is required to run this");
         }
     }
 

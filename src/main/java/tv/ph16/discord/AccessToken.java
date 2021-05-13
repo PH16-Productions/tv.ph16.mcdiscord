@@ -1,4 +1,4 @@
-package net.englard.shmuelie.discord;
+package tv.ph16.discord;
 
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

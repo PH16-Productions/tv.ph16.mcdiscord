@@ -1,14 +1,14 @@
-package net.englard.shmuelie.ph16discord;
+package tv.ph16.mcdiscord;
 
 import com.destroystokyo.paper.Title;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import net.englard.shmuelie.discord.AccessToken;
-import net.englard.shmuelie.discord.Client;
-import net.englard.shmuelie.discord.PartialGuild;
-import net.englard.shmuelie.discord.User;
+import tv.ph16.discord.AccessToken;
+import tv.ph16.discord.Client;
+import tv.ph16.discord.PartialGuild;
+import tv.ph16.discord.User;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.http.NameValuePair;

@@ -1,4 +1,4 @@
-package net.englard.shmuelie.discord;
+package tv.ph16.discord;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,6 +1,6 @@
 name: PH16-Discord
 version: ${project.version}
-main: net.englard.shmuelie.ph16discord.Plugin
+main: tv.ph16.mcdiscord.Plugin
 api-version: 1.15
 prefix: PH16-Discord
 authors: [ shmuelie ]

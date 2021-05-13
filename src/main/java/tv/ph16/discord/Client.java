@@ -1,4 +1,4 @@
-package net.englard.shmuelie.discord;
+package tv.ph16.discord;
 
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.builder.api.DefaultApi20;

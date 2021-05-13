@@ -1,0 +1,10 @@
+name: PH16-Discord
+version: ${project.version}
+main: net.englard.shmuelie.ph16discord.Plugin
+api-version: 1.15
+prefix: PH16-Discord
+authors: [ shmuelie ]
+description: Integration between Discord and Minecraft for PH16
+website: https://ph16.tv/
+depend:
+  - Bukkit-Web-Server

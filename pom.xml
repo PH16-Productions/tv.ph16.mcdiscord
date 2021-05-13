@@ -3,22 +3,39 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>tv.ph16</groupId>
     <artifactId>mcdiscord</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.2</version>
     <packaging>jar</packaging>
-
     <name>PH16-Discord</name>
-
     <description>Integration between Discord and Minecraft for PH16</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <versionName>${project.version}</versionName>
     </properties>
+    <inceptionYear>2020</inceptionYear>
+    <developers>
+        <developer>
+            <name>Shmueli Englard</name>
+            <email>shmueli.yosef@englard.net</email>
+            <url>https://shmuelie.englard.net/</url>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/PH16-Productions/tv.ph16.mcdiscord/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+        </license>
+    </licenses>
+    <organization>
+        <name>PH16 Productions</name>
+        <url>https://ph16.tv/</url>
+    </organization>
     <url>https://ph16.tv/</url>
-
     <build>
         <plugins>
             <plugin>
@@ -55,7 +72,6 @@
             </resource>
         </resources>
     </build>
-
     <repositories>
         <repository>
             <id>papermc</id>
@@ -71,7 +87,6 @@
             <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
@@ -105,4 +120,10 @@
             <version>2.2.9</version>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/PH16-Productions/tv.ph16.mcdiscord</url>
+        </repository>
+    </distributionManagement>
 </project>

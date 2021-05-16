@@ -1,6 +1,5 @@
 package tv.ph16.mcdiscord;
 
-import com.destroystokyo.paper.Title;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
@@ -9,8 +8,13 @@ import tv.ph16.discord.AccessToken;
 import tv.ph16.discord.Client;
 import tv.ph16.discord.PartialGuild;
 import tv.ph16.discord.User;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+
+import org.apache.commons.codec.Charsets;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.bukkit.Bukkit;
@@ -163,7 +167,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
 
     @NotNull
     private static Map<String, String> getParams(@NotNull URI uri) {
-        List<NameValuePair> paramPairs = URLEncodedUtils.parse(uri, "UTF-8");
+        List<NameValuePair> paramPairs = URLEncodedUtils.parse(uri, Charsets.UTF_8);
         Map<String, String> params = new HashMap<>(paramPairs.size());
         for (NameValuePair pair : paramPairs) {
             params.put(pair.getName(), pair.getValue());
@@ -199,8 +203,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
                 Optional<User> userOptional = discordClient.getCurrentUser(token);
                 if (userOptional.isPresent()) {
                     User user = userOptional.get();
-                    player.setDisplayName(user.getUsername());
-                    player.setPlayerListName(user.getUsername());
+                    player.playerListName(Component.text(user.getUsername()));
                 }
             } catch (IOException | InterruptedException | ExecutionException ex) {
                 getLogger().severe("Fetch User Error:\n" + ex);
@@ -223,7 +226,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
     @EventHandler
     public void onLogin(@NotNull PlayerLoginEvent event) {
         if (discordClient == null || httpContext == null) {
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Server Not Ready");
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("Server Not Ready"));
         }
     }
 
@@ -236,13 +239,15 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
             player.setCustomName(player.getGameMode().name());
             player.setGameMode(GameMode.SPECTATOR);
             String url = discordClient.getAuthorizationUrl(player.getUniqueId().toString());
-            TextComponent clickArea = new TextComponent();
-            clickArea.setBold(true);
-            clickArea.setUnderlined(true);
-            clickArea.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
-            clickArea.setText("login with Discord (Click On This)");
-            player.sendMessage(new TextComponent("To use the server, please "), clickArea, new TextComponent("."));
-            player.sendTitle(Title.builder().title("Please open chat (t) and login with Discord.").stay(10000).build());
+            player.showTitle(Title.title(Component.text("Please open chat (t) and login with Discord."), null));
+            player.sendMessage(
+                Component.text("To user the server, please ").
+                append(
+                    Component.text("login with Discord (Click On This)").
+                    style(
+                        Style.style().
+                        decorate(TextDecoration.BOLD, TextDecoration.UNDERLINED).
+                        clickEvent(ClickEvent.openUrl(url)))));
         } else if (!userAllowed(player)) {
             logPlayerAction(player, "is not part of PH16.");
             kickPlayer(player, "To join this server you must be part of the PH16 Discord Server.");
@@ -255,7 +260,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
 
     private void kickPlayer(@NotNull Player player, @NotNull String msg) {
         logPlayerAction(player, "kicked: " + msg);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.kickPlayer(msg));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.kick(Component.text(msg)));
     }
 
     private void logPlayerAction(@NotNull Player player, @NotNull String msg) {

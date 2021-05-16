@@ -86,7 +86,10 @@
         </repository>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/PH16-Productions/tv.ph16.bukkitwebserver</url>
+            <url>https://maven.pkg.github.com/PH16-Productions/*</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <dependencies>

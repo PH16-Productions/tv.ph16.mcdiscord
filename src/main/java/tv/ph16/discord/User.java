@@ -101,9 +101,9 @@ public class User {
         entity.setAvatar(getValueSafe(jsonObject, "avatar", String.class));
         entity.setVerified(getValueSafe(jsonObject, "verified", Boolean.class));
         entity.setEmail(getValueSafe(jsonObject, "email", String.class));
-        entity.setFlags(getValueSafe(jsonObject, "flags", Integer.TYPE));
-        entity.setPremiumType(getValueSafe(jsonObject, "premium_type", Integer.TYPE));
-        entity.setPublicFlags(getValueSafe(jsonObject, "public_flags", Integer.TYPE));
+        entity.setFlags(getValueSafe(jsonObject, "flags", Integer.class));
+        entity.setPremiumType(getValueSafe(jsonObject, "premium_type", Integer.class));
+        entity.setPublicFlags(getValueSafe(jsonObject, "public_flags", Integer.class));
         return entity;
     }
 
@@ -132,7 +132,12 @@ public class User {
         if (clazz == Boolean.class) {
             return clazz.cast(false);
         }
-        if (clazz.isPrimitive()) {
+        if (clazz == Integer.class ||
+            clazz == Double.class ||
+            clazz == Float.class ||
+            clazz == Long.class ||
+            clazz == Short.class ||
+            clazz == Byte.class) {
             return clazz.cast(0);
         }
         throw new ClassCastException();

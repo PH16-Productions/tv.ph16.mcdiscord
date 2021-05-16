@@ -7,80 +7,89 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class User {
     private String id;
-
     private String username;
-
     private String discriminator;
-
     private String avatar;
-
     private boolean verified;
-
     private String email;
-
     private int flags;
-
     private int premiumType;
-
     private int publicFlags;
 
-    public void setId(String id){
+    public void setId(@NotNull String id){
         this.id = id;
     }
+    @NotNull
     public String getId(){
         return this.id;
     }
-    public void setUsername(String username){
+
+    public void setUsername(@NotNull String username){
         this.username = username;
     }
+    @NotNull
     public String getUsername(){
         return this.username;
     }
-    public void setDiscriminator(String discriminator){
+
+    public void setDiscriminator(@NotNull String discriminator){
         this.discriminator = discriminator;
     }
+    @NotNull
     public String getDiscriminator(){
         return this.discriminator;
     }
-    public void setAvatar(String avatar){
+
+    public void setAvatar(@NotNull String avatar){
         this.avatar = avatar;
     }
+    @NotNull
     public String getAvatar(){
         return this.avatar;
     }
+
     public void setVerified(boolean verified){
         this.verified = verified;
     }
     public boolean getVerified(){
         return this.verified;
     }
-    public void setEmail(String email){
+
+    public void setEmail(@NotNull String email){
         this.email = email;
     }
+    @NotNull
     public String getEmail(){
         return this.email;
     }
+
     public void setFlags(int flags){
         this.flags = flags;
     }
     public int getFlags(){
         return this.flags;
     }
+
     public void setPremiumType(int premiumType){
         this.premiumType = premiumType;
     }
     public int getPremiumType(){
         return this.premiumType;
     }
+
     public void setPublicFlags(int publicFlags){
         this.publicFlags = publicFlags;
     }
     public int getPublicFlags(){
         return this.publicFlags;
     }
-    public static User fill(JSONObject jsonObject){
+
+    @NotNull
+    public static User fill(@NotNull JSONObject jsonObject){
         User entity = new User();
         if (jsonObject.has("id")) {
             entity.setId(jsonObject.getString("id"));
@@ -97,7 +106,9 @@ public class User {
         entity.setPublicFlags(getValueSafe(jsonObject, "public_flags", Integer.TYPE));
         return entity;
     }
-    public static List<User> fillList(JSONArray jsonArray) {
+
+    @NotNull
+    public static List<User> fillList(@Nullable JSONArray jsonArray) {
         if (jsonArray == null || jsonArray.length() == 0)
             return new ArrayList<>();
         List<User> users = new ArrayList<>();

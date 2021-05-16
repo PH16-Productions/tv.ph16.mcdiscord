@@ -41,31 +41,38 @@ public final class AccessToken implements ConfigurationSerializable {
                 (String)state.get("scope"), (String)state.get("rawResponse")));
     }
 
+    @NotNull
     String getAccessToken() {
         return token.getAccessToken();
     }
 
+    @NotNull
     String getTokenType() {
         return token.getTokenType();
     }
 
+    @NotNull
     Integer getExpiresIn() {
         return token.getExpiresIn();
     }
 
+    @NotNull
     String getRefreshToken() {
         return token.getRefreshToken();
     }
 
+    @NotNull
     String getScope() {
         return token.getScope();
     }
 
+    @NotNull
     @Override
     public boolean equals(Object o) {
         return token.equals(o);
     }
 
+    @NotNull
     @Override
     public int hashCode() {
         return token.hashCode();

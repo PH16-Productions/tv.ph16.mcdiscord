@@ -104,7 +104,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20201115</version>
+            <version>20210307</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -114,12 +114,12 @@
         <dependency>
             <groupId>com.github.scribejava</groupId>
             <artifactId>scribejava-core</artifactId>
-            <version>8.0.0</version>
+            <version>8.3.1</version>
         </dependency>
         <dependency>
             <groupId>tv.ph16</groupId>
             <artifactId>bukkitwebserver</artifactId>
-            <version>2.2.9</version>
+            <version>2.2.11</version>
         </dependency>
     </dependencies>
     <distributionManagement>

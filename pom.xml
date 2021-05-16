@@ -7,7 +7,7 @@
     <artifactId>mcdiscord</artifactId>
     <version>1.3.4</version>
     <packaging>jar</packaging>
-    <name>PH16-Discord</name>
+    <name>PH16 Discord</name>
     <description>Integration between Discord and Minecraft for PH16</description>
     <inceptionYear>2020</inceptionYear>
     <url>https://ph16.tv/</url>

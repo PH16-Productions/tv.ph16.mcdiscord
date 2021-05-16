@@ -8,3 +8,8 @@ description: Integration between Discord and Minecraft for PH16
 website: https://ph16.tv/
 depend:
   - Bukkit-Web-Server
+libraries:
+  - org.jetbrains:annotations:20.1.0
+  - org.json:json:20201115
+  - org.apache.httpcomponents:httpclient:4.5.13
+  - com.github.scribejava:scribejava-core:8.0.0

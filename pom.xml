@@ -84,6 +84,10 @@
             <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/PH16-Productions/tv.ph16.bukkitwebserver</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>

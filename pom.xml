@@ -9,12 +9,8 @@
     <packaging>jar</packaging>
     <name>PH16-Discord</name>
     <description>Integration between Discord and Minecraft for PH16</description>
-    <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <versionName>${project.version}</versionName>
-    </properties>
     <inceptionYear>2020</inceptionYear>
+    <url>https://ph16.tv/</url>
     <developers>
         <developer>
             <name>Shmueli Englard</name>
@@ -35,7 +31,11 @@
         <name>PH16 Productions</name>
         <url>https://ph16.tv/</url>
     </organization>
-    <url>https://ph16.tv/</url>
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <versionName>${project.version}</versionName>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -49,20 +49,18 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>true</minimizeJar>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -107,7 +105,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
+            <version>4.5.13</version>
         </dependency>
         <dependency>
             <groupId>com.github.scribejava</groupId>

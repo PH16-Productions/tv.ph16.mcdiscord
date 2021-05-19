@@ -113,7 +113,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.scribejava</groupId>
-            <artifactId>scribejava-core</artifactId>
+            <artifactId>scribejava-apis</artifactId>
             <version>8.3.1</version>
         </dependency>
         <dependency>
@@ -121,6 +121,11 @@
             <artifactId>bukkitwebserver</artifactId>
             <version>2.2.11</version>
         </dependency>
+        <dependency>
+            <groupId>com.spencerwi</groupId>
+            <artifactId>Either.java</artifactId>
+            <version>2.7.0</version>
+        </dependency>        
     </dependencies>
     <distributionManagement>
         <repository>

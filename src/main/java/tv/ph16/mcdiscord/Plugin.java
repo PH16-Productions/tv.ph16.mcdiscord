@@ -239,7 +239,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
             player.setCustomName(player.getGameMode().name());
             player.setGameMode(GameMode.SPECTATOR);
             String url = discordClient.getAuthorizationUrl(player.getUniqueId().toString());
-            player.showTitle(Title.title(Component.text("Please open chat (t) and login with Discord."), null));
+            player.showTitle(Title.title(Component.text("Please open chat (t) and login with Discord."), Component.text("")));
             player.sendMessage(
                 Component.text("To user the server, please ").
                 append(

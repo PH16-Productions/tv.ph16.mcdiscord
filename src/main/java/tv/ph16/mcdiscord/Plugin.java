@@ -142,13 +142,13 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
             AccessToken tokens = discordClient.getAccessToken(params.get("code"));
             setUserTokens(player, tokens);
             if (userAllowed(player)) {
-                String s = player.getCustomName();
+                String s = player.customName().toString();
                 if (s == null) {
                     getLogger().severe("Player Mode missing");
                     kickPlayer(player, "Issue authenticating with Discord. Please try again later.");
                 } else {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-                        player.setCustomName(null);
+                        player.customName(null);
                         player.setGameMode(GameMode.valueOf(s));
                         setUserNameFromDiscord(player);
                     });
@@ -217,7 +217,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
     @EventHandler
     public void onGameModeChange(@NotNull PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
-        if (player.getCustomName() != null && event.getNewGameMode() != GameMode.SPECTATOR) {
+        if (player.customName() != null && event.getNewGameMode() != GameMode.SPECTATOR) {
             event.setCancelled(true);
             player.setGameMode(GameMode.SPECTATOR);
         }
@@ -236,7 +236,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
         player.sendMessage("Welcome to the PH16 Minecraft Server.");
         if (!getIsUserApproved(player)) {
             logPlayerAction(player, "has not linked with Discord.");
-            player.setCustomName(player.getGameMode().name());
+            player.customName(Component.text(player.getGameMode().name()));
             player.setGameMode(GameMode.SPECTATOR);
             String url = discordClient.getAuthorizationUrl(player.getUniqueId().toString());
             player.showTitle(Title.title(Component.text("Please open chat (t) and login with Discord."), Component.text("")));
@@ -254,7 +254,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
         } else {
             logPlayerAction(player, "authenticated successfully with Discord");
             setUserNameFromDiscord(player);
-            player.setCustomName(null);
+            player.customName(null);
         }
     }
 

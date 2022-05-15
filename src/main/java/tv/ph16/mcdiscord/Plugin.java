@@ -19,6 +19,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -197,6 +199,10 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
         return ph16Guild.isPresent();
     }
 
+    /**
+     * Set a player to have their Discord name.
+     * @param player
+     */
     private void setUserNameFromDiscord(@NotNull Player player) {
         AccessToken token = getUserTokens(player);
         if (token != null) {
@@ -215,6 +221,10 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
         }
     }
 
+    /**
+     * Prevents user from changing out of spectater mode if not allowed.
+     * @param event
+     */
     @EventHandler
     public void onGameModeChange(@NotNull PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
@@ -224,6 +234,10 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
         }
     }
 
+    /**
+     * Prevents user login if Discord or HTTP Server are not operational.
+     * @param event
+     */
     @EventHandler
     public void onLogin(@NotNull PlayerLoginEvent event) {
         if (discordClient == null || httpContext == null) {
@@ -231,10 +245,44 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
         }
     }
 
+    /**
+     * Checks if a player should be explicitly allowed or explicitly banned.
+     * @param player The player to check for.
+     * @return True if the player is explicitly allowed, False if the player is explicitly banned, or null if the player uses Discord authentication.
+     */
+    @Nullable
+    private Boolean explicitAuthentication(@NotNull Player player) {
+        Server server = this.getServer();
+        for (OfflinePlayer bannedPlayer : server.getBannedPlayers()) {
+            if (player.getUniqueId().equals(bannedPlayer.getUniqueId())) {
+                return Boolean.FALSE;
+            }
+        }
+        for (OfflinePlayer allowedPlayer : server.getWhitelistedPlayers()) {
+            if (player.getUniqueId().equals(allowedPlayer.getUniqueId())) {
+                return Boolean.TRUE;
+            }
+        }
+        return null;
+    }
+
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        player.sendMessage("Welcome to the PH16 Minecraft Server.");
+
+        // Check if user needs discord authentication.
+        Boolean explicitAuth = explicitAuthentication(player);
+        if (explicitAuth != null) {
+            if (explicitAuth.booleanValue()) {
+                // User explicitly allowed.
+                return;
+            } else {
+                // User explicitly banned.
+                kickPlayer(player, "User Banned");
+                return;
+            }
+        }
+
         if (!getIsUserApproved(player)) {
             logPlayerAction(player, "has not linked with Discord.");
             player.customName(Component.text(player.getGameMode().name()));

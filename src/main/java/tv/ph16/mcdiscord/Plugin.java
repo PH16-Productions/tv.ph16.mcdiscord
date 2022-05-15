@@ -21,7 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,15 +40,20 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
+    private StateManager stateManager;
     private HttpContext httpContext;
     private Client discordClient;
 
+    public Plugin() {
+        stateManager = new StateManager(this);
+    }
+
     @Override
     public void onEnable() {
-        String clientId = getConfig().getString("clientId");
-        String clientSecret = getConfig().getString("clientSecret");
-        String scopes = getConfig().getString("scopes");
-        String callback = getConfig().getString("callback");
+        String clientId = stateManager.getClientId();
+        String clientSecret = stateManager.getClientSecret();
+        String scopes = stateManager.getScopes();
+        String callback = stateManager.getCallback();
         if (clientId == null || clientSecret == null || scopes == null || callback == null) {
             getLogger().severe("Missing configuration");
             return;
@@ -68,33 +72,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
 
     @Override
     public void onLoad() {
-        ConfigurationSerialization.registerClass(AccessToken.class);
-    }
-
-    public boolean getIsUserApproved(@NotNull Player player) {
-        return getConfig().contains(player.getUniqueId().toString(), true);
-    }
-
-    public void setUserTokens(@NotNull Player player, @NotNull AccessToken tokens) {
-        getConfig().set(player.getUniqueId().toString(), tokens);
-        saveConfig();
-    }
-
-    @Nullable
-    public AccessToken getUserTokens(@NotNull Player player) {
-        AccessToken token = getConfig().getObject(player.getUniqueId().toString(), AccessToken.class);
-        if (token != null) {
-            try {
-                token = discordClient.refreshAccessToken(token);
-                setUserTokens(player, token);
-            } catch (IOException | InterruptedException | ExecutionException ex) {
-                getLogger().severe("Fetch Guilds Error:\n" + ex);
-                if (ex instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-        return token;
+        stateManager.onLoad();
     }
 
     /**
@@ -142,7 +120,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
     private void handleSuccessfulOAuthRequest(@NotNull Map<String, String> params, @NotNull Player player) {
         try {
             AccessToken tokens = discordClient.getAccessToken(params.get("code"));
-            setUserTokens(player, tokens);
+            stateManager.setUserTokens(player, tokens);
             if (userAllowed(player)) {
                 String s = player.customName().toString();
                 if (s == null) {
@@ -179,7 +157,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
     }
 
     private boolean userAllowed(@NotNull Player player) {
-        AccessToken token = getUserTokens(player);
+        AccessToken token = stateManager.getUserTokens(player, discordClient);
         if (token == null) {
             return false;
         }
@@ -204,7 +182,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
      * @param player
      */
     private void setUserNameFromDiscord(@NotNull Player player) {
-        AccessToken token = getUserTokens(player);
+        AccessToken token = stateManager.getUserTokens(player, discordClient);
         if (token != null) {
             try {
                 Optional<User> userOptional = discordClient.getCurrentUser(token);
@@ -283,7 +261,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
             }
         }
 
-        if (!getIsUserApproved(player)) {
+        if (!stateManager.getIsUserApproved(player)) {
             logPlayerAction(player, "has not linked with Discord.");
             player.customName(Component.text(player.getGameMode().name()));
             player.setGameMode(GameMode.SPECTATOR);

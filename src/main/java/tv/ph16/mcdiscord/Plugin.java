@@ -147,6 +147,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
                     getLogger().severe("Player Mode missing");
                     kickPlayer(player, "Issue authenticating with Discord. Please try again later.");
                 } else {
+                    logPlayerAction(player, "authenticated successfully with Discord and will be allowed in.");
                     Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
                         player.customName(null);
                         player.setGameMode(GameMode.valueOf(s));
@@ -239,6 +240,7 @@ public final class Plugin extends JavaPlugin implements Listener, HttpHandler {
             player.customName(Component.text(player.getGameMode().name()));
             player.setGameMode(GameMode.SPECTATOR);
             String url = discordClient.getAuthorizationUrl(player.getUniqueId().toString());
+            logPlayerAction(player, "can authenticate with url: " + url);
             player.showTitle(Title.title(Component.text("Please open chat (t) and login with Discord."), Component.text("")));
             player.sendMessage(
                 Component.text("To user the server, please ").

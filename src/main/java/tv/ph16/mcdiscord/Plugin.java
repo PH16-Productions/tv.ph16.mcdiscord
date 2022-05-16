@@ -29,11 +29,17 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * The Discord Authentication Plugin.
+ */
 public final class Plugin extends JavaPlugin implements Listener {
     private StateManager stateManager;
     private AuthenticationServer authenticationServer;
     private Client discordClient;
 
+    /**
+     * Initializes a new instance of the Plugin class.
+     */
     public Plugin() {
         stateManager = new StateManager(this);
     }
@@ -60,6 +66,11 @@ public final class Plugin extends JavaPlugin implements Listener {
         stateManager.onLoad();
     }
 
+    /**
+     * Checks if a given player is allowed on the server.
+     * @param player The player to check.
+     * @return true if the player has authenticated and is in the required guild; otherwise false.
+     */
     protected boolean userAllowed(@NotNull Player player) {
         AccessToken token = stateManager.getUserTokens(player, discordClient);
         if (token == null) {
@@ -148,6 +159,10 @@ public final class Plugin extends JavaPlugin implements Listener {
         return null;
     }
 
+    /**
+     * Check players authentication state when they join the server.
+     * @param event
+     */
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -190,11 +205,21 @@ public final class Plugin extends JavaPlugin implements Listener {
         }
     }
 
+    /**
+     * Kicks a player of the server with a log.
+     * @param player The player to kick.
+     * @param msg The reason.
+     */
     protected void kickPlayer(@NotNull Player player, @NotNull String msg) {
         logPlayerAction(player, "kicked: " + msg);
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.kick(Component.text(msg)));
     }
 
+    /**
+     * Log an action related to a player.
+     * @param player The related player.
+     * @param msg The message.
+     */
     protected void logPlayerAction(@NotNull Player player, @NotNull String msg) {
         getLogger().info(() -> "Player " + player.getName() + " " + msg);
     }

@@ -28,17 +28,34 @@ import org.jetbrains.annotations.NotNull;
 import tv.ph16.discord.AccessToken;
 import tv.ph16.discord.Client;
 
+/**
+ * Handles authentication callbacks.
+ */
 public class AuthenticationServer implements HttpHandler {
     private StateManager stateManager;
     private Client discordClient;
     private Plugin plugin;
 
+    /**
+     * Initializes a new instance of the AuthenticationServer class.
+     * @param stateManager The state manager for token access.
+     * @param discordClient The Discord client to use for token access.
+     * @param plugin The plugin that is using the AuthenticationServer.
+     */
     private AuthenticationServer(@NotNull StateManager stateManager, @NotNull Client discordClient, @NotNull Plugin plugin) {
         this.stateManager = stateManager;
         this.discordClient = discordClient;
         this.plugin = plugin;
     }
 
+    /**
+     * Creates a new instance of the Authentication class.
+     * @param stateManager The state manager for token access.
+     * @param discordClient The Discord client to use for token access.
+     * @param plugin The plugin that is using the AuthenticationServer.
+     * @param pluginManager The plugin manager for the server.
+     * @return A new AuthenticationServer if able to configure, otherwise null.
+     */
     @Nullable
     public static AuthenticationServer create(@NotNull StateManager stateManager, @NotNull Client discordClient, @NotNull Plugin plugin, @NotNull PluginManager pluginManager) {
         org.bukkit.plugin.Plugin webServerPlugin = pluginManager.getPlugin("Bukkit-Web-Server");

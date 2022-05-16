@@ -83,7 +83,7 @@ public class StateManager {
     }
 
     /**
-     * Gets a players Discord token.
+     * Gets a players Discord token. Always refreshes the token.
      * @param player the player to get for.
      * @param discordClient the Discord client.
      * @return the token if one is had, otherwise null.

@@ -40,6 +40,9 @@ public final class Plugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(this, this);
+
         String clientId = stateManager.getClientId();
         String clientSecret = stateManager.getClientSecret();
         String scopes = stateManager.getScopes();
@@ -48,8 +51,6 @@ public final class Plugin extends JavaPlugin implements Listener {
             getLogger().severe("Missing configuration");
             return;
         }
-        PluginManager pluginManager = getServer().getPluginManager();
-        pluginManager.registerEvents(this, this);
         discordClient = new Client(clientId, clientSecret, scopes, callback);
         authenticationServer = AuthenticationServer.create(stateManager, discordClient, this, pluginManager);
     }

@@ -35,6 +35,7 @@ public class AuthenticationServer implements HttpHandler {
     private StateManager stateManager;
     private Client discordClient;
     private Plugin plugin;
+    private String redirectionUrl;
 
     /**
      * Initializes a new instance of the AuthenticationServer class.
@@ -42,10 +43,14 @@ public class AuthenticationServer implements HttpHandler {
      * @param discordClient The Discord client to use for token access.
      * @param plugin The plugin that is using the AuthenticationServer.
      */
-    private AuthenticationServer(@NotNull StateManager stateManager, @NotNull Client discordClient, @NotNull Plugin plugin) {
+    private AuthenticationServer(@NotNull StateManager stateManager,
+                                @NotNull Client discordClient,
+                                @NotNull Plugin plugin,
+                                @NotNull String redirectionUrl) {
         this.stateManager = stateManager;
         this.discordClient = discordClient;
         this.plugin = plugin;
+        this.redirectionUrl = redirectionUrl;
     }
 
     /**
@@ -59,14 +64,19 @@ public class AuthenticationServer implements HttpHandler {
     @Nullable
     public static AuthenticationServer create(@NotNull StateManager stateManager, @NotNull Client discordClient, @NotNull Plugin plugin, @NotNull PluginManager pluginManager) {
         org.bukkit.plugin.Plugin webServerPlugin = pluginManager.getPlugin("Bukkit-Web-Server");
-        if (webServerPlugin instanceof tv.ph16.bukkitwebserver.Plugin) {
-            AuthenticationServer instance = new AuthenticationServer(stateManager, discordClient, plugin);
-            tv.ph16.bukkitwebserver.Plugin webServer = (tv.ph16.bukkitwebserver.Plugin)webServerPlugin;
-            webServer.addHandler("/discord/", instance);
-            return instance;
-        }
-        plugin.getLogger().severe(tv.ph16.bukkitwebserver.Plugin.class.getCanonicalName() + " is required to run this");
+        if (!(webServerPlugin instanceof tv.ph16.bukkitwebserver.Plugin)) {
+            plugin.getLogger().severe(tv.ph16.bukkitwebserver.Plugin.class.getCanonicalName() + " is required to run this");
         return null;
+        }
+        String redirectionUrl = stateManager.getRedirection();
+        if (redirectionUrl == null) {
+            plugin.getLogger().severe("No redirection URL configured");
+            return null;
+        }
+        AuthenticationServer instance = new AuthenticationServer(stateManager, discordClient, plugin, redirectionUrl);
+        tv.ph16.bukkitwebserver.Plugin webServer = (tv.ph16.bukkitwebserver.Plugin)webServerPlugin;
+        webServer.addHandler("/discord/", instance);
+        return instance;
     }
 
     /**
@@ -96,7 +106,7 @@ public class AuthenticationServer implements HttpHandler {
         if (path.getNameCount() == 2 && path.getName(1).toString().equalsIgnoreCase("oauth") && params.containsKey("state")) {
             handleOAuthRequest(params);
         }
-        responseHeaders.add("Location", "https://ph16.englard.net/");
+        responseHeaders.add("Location", redirectionUrl);
         httpExchange.sendResponseHeaders(302, -1);
     }
 

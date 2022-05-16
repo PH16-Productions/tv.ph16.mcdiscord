@@ -83,6 +83,14 @@ public class StateManager {
     }
 
     /**
+     * Gets the redirection for after calls to the Authentication Server.
+     */
+    @Nullable
+    public String getRedirection() {
+        return plugin.getConfig().getString("redirection");
+    }
+
+    /**
      * Gets a players Discord token. Always refreshes the token.
      * @param player the player to get for.
      * @param discordClient the Discord client.

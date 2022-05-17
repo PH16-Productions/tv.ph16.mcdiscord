@@ -2,7 +2,6 @@ package tv.ph16.mcdiscord;
 
 import tv.ph16.discord.AccessToken;
 import tv.ph16.discord.Client;
-import tv.ph16.discord.PartialGuild;
 import tv.ph16.discord.User;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -12,8 +11,6 @@ import net.kyori.adventure.title.Title;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +20,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -36,12 +32,14 @@ public final class Plugin extends JavaPlugin implements Listener {
     private StateManager stateManager;
     private AuthenticationServer authenticationServer;
     private Client discordClient;
+    private AuthenticationManager authenticationManager;
 
     /**
      * Initializes a new instance of the Plugin class.
      */
     public Plugin() {
         stateManager = new StateManager(this);
+        authenticationManager = new AuthenticationManager(this, stateManager);
     }
 
     @Override
@@ -58,7 +56,7 @@ public final class Plugin extends JavaPlugin implements Listener {
             return;
         }
         discordClient = new Client(clientId, clientSecret, scopes, callback);
-        authenticationServer = AuthenticationServer.create(stateManager, discordClient, this, pluginManager);
+        authenticationServer = AuthenticationServer.create(stateManager, discordClient, this, pluginManager, authenticationManager);
     }
 
     @Override
@@ -67,37 +65,11 @@ public final class Plugin extends JavaPlugin implements Listener {
     }
 
     /**
-     * Checks if a given player is allowed on the server.
-     * @param player The player to check.
-     * @return true if the player has authenticated and is in the required guild; otherwise false.
-     */
-    protected boolean userAllowed(@NotNull Player player) {
-        AccessToken token = stateManager.getUserTokens(player, discordClient);
-        if (token == null) {
-            return false;
-        }
-
-        Optional<PartialGuild> ph16Guild = Optional.empty();
-        try {
-            Optional<List<PartialGuild>> partialGuilds = discordClient.getCurrentUsersGuilds(token);
-            if (partialGuilds.isPresent()) {
-                ph16Guild = partialGuilds.get().stream().filter(pg -> pg.getName().equalsIgnoreCase(getConfig().getString("guildName"))).findFirst();
-            }
-        } catch (IOException | InterruptedException | ExecutionException ex) {
-            getLogger().severe("Fetch Guilds Error:\n" + ex);
-            if (ex instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-        }
-        return ph16Guild.isPresent();
-    }
-
-    /**
      * Set a player to have their Discord name.
      * @param player
      */
     protected void setUserNameFromDiscord(@NotNull Player player) {
-        AccessToken token = stateManager.getUserTokens(player, discordClient);
+        AccessToken token = authenticationManager.getUserToken(player, discordClient);
         if (token != null) {
             try {
                 Optional<User> userOptional = discordClient.getCurrentUser(token);
@@ -139,27 +111,6 @@ public final class Plugin extends JavaPlugin implements Listener {
     }
 
     /**
-     * Checks if a player should be explicitly allowed or explicitly banned.
-     * @param player The player to check for.
-     * @return True if the player is explicitly allowed, False if the player is explicitly banned, or null if the player uses Discord authentication.
-     */
-    @Nullable
-    private Boolean explicitAuthentication(@NotNull Player player) {
-        Server server = this.getServer();
-        for (OfflinePlayer bannedPlayer : server.getBannedPlayers()) {
-            if (player.getUniqueId().equals(bannedPlayer.getUniqueId())) {
-                return Boolean.FALSE;
-            }
-        }
-        for (OfflinePlayer allowedPlayer : server.getWhitelistedPlayers()) {
-            if (player.getUniqueId().equals(allowedPlayer.getUniqueId())) {
-                return Boolean.TRUE;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Check players authentication state when they join the server.
      * @param event
      */
@@ -168,7 +119,7 @@ public final class Plugin extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
 
         // Check if user needs discord authentication.
-        Boolean explicitAuth = explicitAuthentication(player);
+        Boolean explicitAuth = authenticationManager.getUserExplicitlyAllowedOrBanned(player);
         if (explicitAuth != null) {
             if (explicitAuth.booleanValue()) {
                 // User explicitly allowed.
@@ -180,7 +131,8 @@ public final class Plugin extends JavaPlugin implements Listener {
             }
         }
 
-        if (!stateManager.getIsUserApproved(player)) {
+        AccessToken token = authenticationManager.getUserToken(player, discordClient);
+        if (token == null) {
             logPlayerAction(player, "has not linked with Discord.");
             player.customName(Component.text(player.getGameMode().name()));
             player.setGameMode(GameMode.SPECTATOR);
@@ -195,7 +147,7 @@ public final class Plugin extends JavaPlugin implements Listener {
                         Style.style().
                         decorate(TextDecoration.BOLD, TextDecoration.UNDERLINED).
                         clickEvent(ClickEvent.openUrl(url)))));
-        } else if (!userAllowed(player)) {
+        } else if (!authenticationManager.getUserInRequiredGuild(token, discordClient)) {
             logPlayerAction(player, "is not part of PH16.");
             kickPlayer(player, "To join this server you must be part of the PH16 Discord Server.");
         } else {

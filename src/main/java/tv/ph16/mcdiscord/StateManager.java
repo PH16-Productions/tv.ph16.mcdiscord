@@ -1,8 +1,5 @@
 package tv.ph16.mcdiscord;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
 import javax.annotation.Nullable;
 
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -11,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import tv.ph16.discord.AccessToken;
-import tv.ph16.discord.Client;
 
 /**
  * Managers state for the plugin.
@@ -36,8 +32,13 @@ public class StateManager {
      * @param player the player to check.
      * @return true if the player is approved, otherwise false.
      */
-    public boolean getIsUserApproved(@NotNull Player player) {
+    public boolean userHasTokenSaved(@NotNull Player player) {
         return plugin.getConfig().contains(player.getUniqueId().toString(), true);
+    }
+
+    @Nullable
+    public AccessToken getUserToken(@NotNull Player player) {
+        return plugin.getConfig().getObject(player.getUniqueId().toString(), AccessToken.class);
     }
 
     /**
@@ -90,26 +91,8 @@ public class StateManager {
         return plugin.getConfig().getString("redirection");
     }
 
-    /**
-     * Gets a players Discord token. Always refreshes the token.
-     * @param player the player to get for.
-     * @param discordClient the Discord client.
-     * @return the token if one is had, otherwise null.
-     */
     @Nullable
-    public AccessToken getUserTokens(@NotNull Player player, @NotNull Client discordClient) {
-        AccessToken token = plugin.getConfig().getObject(player.getUniqueId().toString(), AccessToken.class);
-        if (token != null) {
-            try {
-                token = discordClient.refreshAccessToken(token);
-                setUserTokens(player, token);
-            } catch (IOException | InterruptedException | ExecutionException ex) {
-                plugin.getLogger().severe("Fetch Guilds Error:\n" + ex);
-                if (ex instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-        return token;
+    public String getGuildName() {
+        return plugin.getConfig().getString("guildName");
     }
 }

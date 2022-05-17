@@ -36,6 +36,7 @@ public class AuthenticationServer implements HttpHandler {
     private Client discordClient;
     private Plugin plugin;
     private String redirectionUrl;
+    private AuthenticationManager authenticationManager;
 
     /**
      * Initializes a new instance of the AuthenticationServer class.
@@ -46,11 +47,13 @@ public class AuthenticationServer implements HttpHandler {
     private AuthenticationServer(@NotNull StateManager stateManager,
                                 @NotNull Client discordClient,
                                 @NotNull Plugin plugin,
-                                @NotNull String redirectionUrl) {
+                                @NotNull String redirectionUrl,
+                                @NotNull AuthenticationManager authenticationManager) {
         this.stateManager = stateManager;
         this.discordClient = discordClient;
         this.plugin = plugin;
         this.redirectionUrl = redirectionUrl;
+        this.authenticationManager = authenticationManager;
     }
 
     /**
@@ -62,7 +65,7 @@ public class AuthenticationServer implements HttpHandler {
      * @return A new AuthenticationServer if able to configure, otherwise null.
      */
     @Nullable
-    public static AuthenticationServer create(@NotNull StateManager stateManager, @NotNull Client discordClient, @NotNull Plugin plugin, @NotNull PluginManager pluginManager) {
+    public static AuthenticationServer create(@NotNull StateManager stateManager, @NotNull Client discordClient, @NotNull Plugin plugin, @NotNull PluginManager pluginManager, @NotNull AuthenticationManager authenticationManager) {
         org.bukkit.plugin.Plugin webServerPlugin = pluginManager.getPlugin("Bukkit-Web-Server");
         if (!(webServerPlugin instanceof tv.ph16.bukkitwebserver.Plugin)) {
             plugin.getLogger().severe(tv.ph16.bukkitwebserver.Plugin.class.getCanonicalName() + " is required to run this");
@@ -73,7 +76,7 @@ public class AuthenticationServer implements HttpHandler {
             plugin.getLogger().severe("No redirection URL configured");
             return null;
         }
-        AuthenticationServer instance = new AuthenticationServer(stateManager, discordClient, plugin, redirectionUrl);
+        AuthenticationServer instance = new AuthenticationServer(stateManager, discordClient, plugin, redirectionUrl, authenticationManager);
         tv.ph16.bukkitwebserver.Plugin webServer = (tv.ph16.bukkitwebserver.Plugin)webServerPlugin;
         webServer.addHandler("/discord/", instance);
         return instance;
@@ -134,9 +137,9 @@ public class AuthenticationServer implements HttpHandler {
 
     private void handleSuccessfulOAuthRequest(@NotNull Map<String, String> params, @NotNull Player player) {
         try {
-            AccessToken tokens = discordClient.getAccessToken(params.get("code"));
-            stateManager.setUserTokens(player, tokens);
-            if (plugin.userAllowed(player)) {
+            AccessToken token = discordClient.getAccessToken(params.get("code"));
+            stateManager.setUserTokens(player, token);
+            if (authenticationManager.getUserInRequiredGuild(token, discordClient)) {
                 String s = player.customName().toString();
                 if (s == null) {
                     plugin.getLogger().severe("Player Mode missing");

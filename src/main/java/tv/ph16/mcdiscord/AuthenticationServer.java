@@ -148,7 +148,12 @@ public class AuthenticationServer implements HttpHandler {
                     plugin.logPlayerAction(player, "authenticated successfully with Discord and will be allowed in.");
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                         player.customName(null);
-                        player.setGameMode(GameMode.valueOf(s));
+                        try {
+                            player.setGameMode(GameMode.valueOf(s));
+                        } catch (IllegalArgumentException ex) {
+                            plugin.getLogger().warning("Failed to parse GameMode from customName: " + ex.getLocalizedMessage());
+                            player.setGameMode(GameMode.SURVIVAL);
+                        }
                         plugin.setUserNameFromDiscord(player);
                     });
                 }

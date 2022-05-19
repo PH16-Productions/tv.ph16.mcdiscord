@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>tv.ph16</groupId>
     <artifactId>mcdiscord</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
     <name>PH16 Discord</name>
     <description>Integration between Discord and Minecraft for PH16</description>

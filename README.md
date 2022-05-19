@@ -13,13 +13,9 @@ Plugin provides authentication using Discord. Minecraft users is stuck in
 spectator mode until they give the plug permission to link to Discord. Once
 linked it also checks if the Discord user is in a desired Guild.
 
-### Discord Name
-
-Plugin shows users Discord user name instead of Minecraft user name.
-
 ## Dependencies
 
-[![com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT](https://img.shields.io/badge/paper--api-1.16.5--R0.1--SNAPSHOT-blue?style=for-the-badge)](https://papermc.io/)
+[![com.destroystokyo.paper:paper-api:1.18.2-R0.1-SNAPSHOT](https://img.shields.io/badge/paper--api-1.18.2--R0.1--SNAPSHOT-blue?style=for-the-badge)](https://papermc.io/)
 [![org.jetbrains:annotations:20.1.0](https://img.shields.io/badge/JetBrains%20Java%20Annotations-v20.1.0-blue?style=for-the-badge)](https://search.maven.org/artifact/org.jetbrains/annotations/20.1.0/jar)
 [![org.json:json:20210307](https://img.shields.io/badge/JSON%20in%20Java-v20210307-blue?style=for-the-badge)](https://search.maven.org/artifact/org.json/json/20210307/bundle)
 [![org.apache.httpcomponents:httpclient:4.5.13](https://img.shields.io/badge/Apache%20HttpClient-v4.5.13-blue?style=for-the-badge)](https://search.maven.org/artifact/org.apache.httpcomponents/httpclient/4.5.13/jar)
